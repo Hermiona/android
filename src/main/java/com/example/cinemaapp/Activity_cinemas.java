@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class Activity_cinemas extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG="com.example.cinemaapp";
     Button btnGo;
     String[] cinemaList={"cinema1", "cinema2", "cinema3", "cinema4"};
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cinemas);
         colors[0] = Color.parseColor("#559966CC");
         colors[1] = Color.parseColor("#55336699");
 
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(int i=0; i<cinemaList.length; i++){
             final String id=String.valueOf(cinemaIdList[i]);
             String name=cinemaList[i];
-            View item=inflater.inflate(R.layout.item, linLayout, false);
+            View item=inflater.inflate(R.layout.cinema_item, linLayout, false);
             TextView cinemaName=(TextView) item.findViewById(R.id.txtCinemaName);
             TextView cinemaId=(TextView) item.findViewById(R.id.txtCinemaId);
             cinemaName.setText(name);
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(View view) {
                     Log.i(TAG, "layout clicked");
-                    Intent intent=new Intent(MainActivity.this, Activity_movies.class);
+                    Intent intent=new Intent(Activity_cinemas.this, Activity_movies.class);
                     intent.putExtra("cinema_id", id);
                     startActivity(intent);
                 }
@@ -54,15 +54,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Log.i(TAG, String.valueOf(view.getId()));
-//        switch (view.getId()) {
-//            case R.id:
-//                Log.i(TAG, "btnGo clicked");
-//                Intent intent=new Intent(this, Activity_movies.class);
-//                intent.putExtra("cinema_id", 13);
-//                startActivity(intent);
-//                break;
-//            default:
-//                break;
-//        }
     }
 }

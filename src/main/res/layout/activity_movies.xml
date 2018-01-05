@@ -7,13 +7,10 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello"
-        tools:layout_editor_absoluteX="125dp"
-        tools:layout_editor_absoluteY="28dp" />
+        android:text="@string/hello" />
 
     <ListView
-        android:layout_width="109dp"
-        android:layout_height="495dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/moviesList" />
 </LinearLayout>
