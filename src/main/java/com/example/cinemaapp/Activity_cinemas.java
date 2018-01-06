@@ -42,17 +42,19 @@ public class Activity_cinemas extends AppCompatActivity  {
         //create view for each cinema and append this view to linLayout
         LayoutInflater inflater=getLayoutInflater();
         CinemaModel cinema;
+        //populate cinema list view via inflater but without any adapter
         for(int i=0; i<cinemaList.size(); i++){
             cinema=cinemaList.get(i);
             final String cinema_id=String.valueOf(cinema.getId());
             final String cinema_name=cinema.getName();
+            //create a view from a layout resource for each cinema
             View item=inflater.inflate(R.layout.cinema_item, linLayout, false);
+            //set elements
             TextView cinemaName=(TextView) item.findViewById(R.id.txtCinemaName);
-            TextView cinemaId=(TextView) item.findViewById(R.id.txtCinemaId);
             cinemaName.setText(cinema_name);
-            cinemaId.setText(cinema_id);
             item.getLayoutParams().width= LayoutParams.MATCH_PARENT;
             item.setBackgroundColor(colors[i%2]);
+            //on click on a cinema go to activity
             item.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -64,10 +66,12 @@ public class Activity_cinemas extends AppCompatActivity  {
                     startActivity(intent);
                 }
             });
+            //add view to linLayout
             linLayout.addView(item);
         }
     }
 
+    //get data from Http
     private void getRemoteData(){
         ApiService apiService=ApiClient.getClient().create(ApiService.class);
         Call<List<CinemaModel>> call=apiService.getCinemas();
@@ -75,10 +79,6 @@ public class Activity_cinemas extends AppCompatActivity  {
             @Override
             public void onResponse(Call<List<CinemaModel>> call, Response<List<CinemaModel>> response) {
                 cinemaList=(ArrayList<CinemaModel>) response.body();
-                for(CinemaModel model : cinemaList) {
-                    Log.i(TAG, model.getName());
-                }
-
                 processData();
             }
 

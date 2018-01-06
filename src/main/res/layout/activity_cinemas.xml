@@ -7,8 +7,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Staff list"
-        android:layout_gravity="center_horizontal">
+        android:text="@string/cinemas"
+        android:layout_gravity="top|center_horizontal"
+        android:textSize="24sp">
     </TextView>
     <ScrollView
         android:layout_width="match_parent"

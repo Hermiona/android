@@ -17,22 +17,30 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Activity_movies extends AppCompatActivity {
 
     private static final String TAG="com.example.cinemaapp";
     ArrayList<MovieModel> movies=new ArrayList<>();
-
+    ListView list;
+    String cinema_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
-        //get sent data
+        //get data that was sent from previous activity
         Intent intent = getIntent();
-        String cinema_id=intent.getStringExtra("cinema_id");
+        cinema_id=intent.getStringExtra("cinema_id");
         String ciname_name=intent.getStringExtra("cinema_name");
         Log.i(TAG,cinema_id);
         //set the back (up) button
@@ -40,37 +48,13 @@ public class Activity_movies extends AppCompatActivity {
         //set the title of this activity to be the street name
         getSupportActionBar().setTitle(ciname_name);
 
-        //populate movies array list
-        movies.add(
-            new MovieModel(0, "movie0", "http://www.kino.kg/archive/ZOR/MovieBigPoster.jpg")
-        );
-        movies.add(
-                new MovieModel(1, "movie1", "http://www.kino.kg/archive/ZOR/MovieBigPoster.jpg")
-        );
-        movies.add(
-                new MovieModel(2, "movie2", "http://www.kino.kg/archive/ZOR/MovieBigPoster.jpg")
-        );
 
-        ListView list=(ListView) findViewById(R.id.moviesList);
-        //create adapter
-        MyAdapter adapter=new MyAdapter(this, movies);
-        list.setAdapter(adapter);
-        //add event listener so we can handle clicks
-        AdapterView.OnItemClickListener adapterViewListener=new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MovieModel movie=movies.get(position);
-                Intent intent=new Intent(Activity_movies.this, Activity_movie_detail.class);
-                //send data to Activity_movie_detail
-                intent.putExtra("movie_id", String.valueOf(movie.getId()));
-                intent.putExtra("movie_title", String.valueOf(movie.getTitle()));
+        list=(ListView) findViewById(R.id.moviesList);
 
-                startActivity(intent);
-            }
-        };
-        //set the listener to the list view
-        list.setOnItemClickListener(adapterViewListener);
+        getRemoteData();
+
     }
-
+//custom adapter for movie item
     class MyAdapter extends ArrayAdapter<MovieModel>{
         private final Context context;
         private final List<MovieModel> movies;
@@ -91,9 +75,58 @@ public class Activity_movies extends AppCompatActivity {
             View item=inflater.inflate(R.layout.movie_item, parent, false);
             TextView title=(TextView) item.findViewById(R.id.txtMovieName);
             ImageView imageView=(ImageView) item.findViewById(R.id.imgMovie);
+            //set movie title
             title.setText(movie.getTitle());
-            imageView.setImageResource(R.mipmap.ic_launcher);
+            //set movie image
+            Glide.with(Activity_movies.this)
+                    .load(movie.getImgUrl())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imageView);
             return item;
         }
+    }
+
+
+
+    private void  processData(){
+        //create adapter
+        MyAdapter adapter=new MyAdapter(this, movies);
+        list.setAdapter(adapter);
+        //add event listener so we can handle clicks
+        AdapterView.OnItemClickListener adapterViewListener=new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MovieModel movie=movies.get(position);
+                Intent intent=new Intent(Activity_movies.this, Activity_movie_detail.class);
+                //send data to Activity_movie_detail
+                intent.putExtra("movie_id", String.valueOf(movie.getId()));
+                intent.putExtra("movie_title", String.valueOf(movie.getTitle()));
+
+                startActivity(intent);
+            }
+        };
+        //set the listener to the list view
+        list.setOnItemClickListener(adapterViewListener);
+    }
+
+    //get data from Http
+    private void getRemoteData(){
+        ApiService apiService=ApiClient.getClient().create(ApiService.class);
+        Call<List<MovieModel>> call=apiService.getMovies(Integer.parseInt(cinema_id));
+        call.enqueue(new Callback<List<MovieModel>>() {
+            @Override
+            public void onResponse(Call<List<MovieModel>> call, Response<List<MovieModel>> response) {
+                movies = (ArrayList<MovieModel>) response.body();
+                for (MovieModel model : movies) {
+                    Log.i(TAG, model.getTitle());
+                }
+
+                processData();
+            }
+            @Override
+            public void onFailure(Call<List<MovieModel>> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
     }
 }

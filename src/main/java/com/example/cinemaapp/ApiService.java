@@ -14,9 +14,9 @@ public interface ApiService {
     @GET("cinemas")
     Call<List<CinemaModel>> getCinemas();
 
-    @GET("films")
-    Call<List<MovieModel>> getMovies();
+    @GET("films/{cinemaId}")
+    Call<List<MovieModel>> getMovies(@Path("cinemaId") int cinemaId);
 
     @GET("film/{id}")
-    Call<List<MovieModel>> getMovie(@Path("id") int id);
+    Call<MovieDetailModel> getMovie(@Path("id") int id);
 }
