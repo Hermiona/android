@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Activity_cinemas extends AppCompatActivity implements View.OnClickListener {
+import java.util.ArrayList;
+
+public class Activity_cinemas extends AppCompatActivity  {
     private static final String TAG="com.example.cinemaapp";
-    Button btnGo;
-    String[] cinemaList={"cinema1", "cinema2", "cinema3", "cinema4"};
-    int[] cinemaIdList={1, 2, 3, 4};
+    ArrayList<CinemaModel> cinemaList=new ArrayList<>();
     int[] colors = new int[2];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,18 +25,25 @@ public class Activity_cinemas extends AppCompatActivity implements View.OnClickL
         colors[0] = Color.parseColor("#559966CC");
         colors[1] = Color.parseColor("#55336699");
 
+        cinemaList.add(new CinemaModel(0, "cinema0"));
+        cinemaList.add(new CinemaModel(1, "cinema1"));
+        cinemaList.add(new CinemaModel(2, "cinema2"));
+
+
         //linLayout is a layout for cinema list from activity_cinemas.xml
         LinearLayout linLayout=(LinearLayout) findViewById(R.id.linLayout);
         //create view for each cinema and append this view to linLayout
         LayoutInflater inflater=getLayoutInflater();
-        for(int i=0; i<cinemaList.length; i++){
-            final String id=String.valueOf(cinemaIdList[i]);
-            String name=cinemaList[i];
+        CinemaModel cinema;
+        for(int i=0; i<cinemaList.size(); i++){
+            cinema=cinemaList.get(i);
+            final String cinema_id=String.valueOf(cinema.getId());
+            final String cinema_name=cinema.getName();
             View item=inflater.inflate(R.layout.cinema_item, linLayout, false);
             TextView cinemaName=(TextView) item.findViewById(R.id.txtCinemaName);
             TextView cinemaId=(TextView) item.findViewById(R.id.txtCinemaId);
-            cinemaName.setText(name);
-            cinemaId.setText(id);
+            cinemaName.setText(cinema_name);
+            cinemaId.setText(cinema_id);
             item.getLayoutParams().width= LayoutParams.MATCH_PARENT;
             item.setBackgroundColor(colors[i%2]);
             item.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +52,8 @@ public class Activity_cinemas extends AppCompatActivity implements View.OnClickL
                 public void onClick(View view) {
                     Log.i(TAG, "layout clicked");
                     Intent intent=new Intent(Activity_cinemas.this, Activity_movies.class);
-                    intent.putExtra("cinema_id", id);
+                    intent.putExtra("cinema_id", cinema_id);
+                    intent.putExtra("cinema_name", cinema_name);
                     startActivity(intent);
                 }
             });
@@ -53,8 +61,5 @@ public class Activity_cinemas extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        Log.i(TAG, String.valueOf(view.getId()));
-    }
+
 }
