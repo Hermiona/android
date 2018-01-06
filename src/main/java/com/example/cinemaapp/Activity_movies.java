@@ -1,10 +1,19 @@
 package com.example.cinemaapp;
 
+import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class Activity_movies extends AppCompatActivity {
     private static final String TAG="com.example.cinemaapp";
@@ -17,10 +26,31 @@ public class Activity_movies extends AppCompatActivity {
         Log.i(TAG,cinema_id);
 
         ListView list=(ListView) findViewById(R.id.moviesList);
-
         //create adapter
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, R.layout.movie_item, movies);
-
+        MyAdapter adapter=new MyAdapter(this, movies);
         list.setAdapter(adapter);
+    }
+
+    class MyAdapter extends ArrayAdapter<String>{
+        private final Context context;
+        private final String[] values;
+
+        public MyAdapter(Context context, String[] values) {
+            super(context, -1, values);
+            this.context = context;
+            this.values = values;
+        }
+
+
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View item=inflater.inflate(R.layout.movie_item, parent, false);
+            TextView title=(TextView) item.findViewById(R.id.txtMovieName);
+            ImageView imageView=(ImageView) item.findViewById(R.id.imgMovie);
+            title.setText(values[position]);
+            imageView.setImageResource(R.mipmap.ic_launcher);
+            return item;
+        }
     }
 }

@@ -25,7 +25,9 @@ public class Activity_cinemas extends AppCompatActivity implements View.OnClickL
         colors[0] = Color.parseColor("#559966CC");
         colors[1] = Color.parseColor("#55336699");
 
+        //linLayout is a layout for cinema list from activity_cinemas.xml
         LinearLayout linLayout=(LinearLayout) findViewById(R.id.linLayout);
+        //create view for each cinema and append this view to linLayout
         LayoutInflater inflater=getLayoutInflater();
         for(int i=0; i<cinemaList.length; i++){
             final String id=String.valueOf(cinemaIdList[i]);
