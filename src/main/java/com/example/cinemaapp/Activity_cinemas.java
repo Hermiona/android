@@ -13,6 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Activity_cinemas extends AppCompatActivity  {
     private static final String TAG="com.example.cinemaapp";
@@ -25,11 +30,13 @@ public class Activity_cinemas extends AppCompatActivity  {
         colors[0] = Color.parseColor("#559966CC");
         colors[1] = Color.parseColor("#55336699");
 
-        cinemaList.add(new CinemaModel(0, "cinema0"));
-        cinemaList.add(new CinemaModel(1, "cinema1"));
-        cinemaList.add(new CinemaModel(2, "cinema2"));
 
+        //get remote data
+        getRemoteData();
 
+    }
+
+    private void processData(){
         //linLayout is a layout for cinema list from activity_cinemas.xml
         LinearLayout linLayout=(LinearLayout) findViewById(R.id.linLayout);
         //create view for each cinema and append this view to linLayout
@@ -61,5 +68,25 @@ public class Activity_cinemas extends AppCompatActivity  {
         }
     }
 
+    private void getRemoteData(){
+        ApiService apiService=ApiClient.getClient().create(ApiService.class);
+        Call<List<CinemaModel>> call=apiService.getCinemas();
+        call.enqueue(new Callback<List<CinemaModel>>() {
+            @Override
+            public void onResponse(Call<List<CinemaModel>> call, Response<List<CinemaModel>> response) {
+                cinemaList=(ArrayList<CinemaModel>) response.body();
+                for(CinemaModel model : cinemaList) {
+                    Log.i(TAG, model.getName());
+                }
+
+                processData();
+            }
+
+            @Override
+            public void onFailure(Call<List<CinemaModel>> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
+    }
 
 }
